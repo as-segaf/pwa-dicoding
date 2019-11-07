@@ -18,3 +18,22 @@ self.addEventListener("install", function(event){
         })
     );
 });
+
+self.addEventListener("fecth", function(event){
+    event.respondWith(
+        caches
+            .match(event.request, { cacheName: CACHE_NAME })
+            .then(function (response) {
+                if (response) {
+                    console.log("Service Worker: Gunakan asset dari cache: ", response.url);
+                    return response;
+                }
+
+                console.log(
+                    "Service Worker: Memuat asset dari server: ",
+                    event.request.url
+                );
+                return fetch(event.request);
+            })
+    );
+});
