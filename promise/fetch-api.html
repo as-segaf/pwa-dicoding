@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Fetch API</title>
+</head>
+<body>
+    <script>
+
+        //
+        // Menggunakan XMLHttpRequest
+        var request = new XMLHttpRequest();
+        request.onload = function() {
+            var data = JSON.parse(this.responseText);
+            console.log(data);
+        }
+        request.onerror = function() {
+            console.log('Error :-S', error);
+        }
+        request.open('get', 'https://readerapi.codepolitan.com/articles', true);
+        request.send();
+
+        // 
+        // Menggunakan fetch api
+        fetch('https://readerapi.codepolitan.com/articles')
+        .then(function (response) {
+            if (response.status !== 200) {
+                console.log('error : ' + response.status);
+                return;
+            }
+            response.json().then(function(data) {
+                console.log(data);
+            })
+        })
+        .catch(function(error) {
+            console.log('error : ' + error);
+        });
+
+        // 
+        // Menggunakan Promise chain dengan fetch
+        fetch('https://readerapi.codepolitan.com/articles')
+        .then(function (response) {
+            if (response.status !== 200) {
+                console.log('error : ' + response.status);
+                
+                // Method reject akan memanggil blok catch
+                return Promise.reject(new Error(response.statusText));
+            } else {
+                // Mengubah suatu objek mennjadi promise agar bisa menggunakan then
+                return Promise.resolve(response);
+            }
+        })
+        .then(function (response) {
+            // Mengembalikan sebuah Promise berupa objek/array Javascript yang diubah dari json
+            return response.json();
+        })
+        .then(function (data) {
+            // Objek/array Javascript dari response.json() masuk lewat data.
+            console.log(data);
+        })
+        .catch(function (error) {
+            // Parameter error berasal dari Promise.reject()
+            console.log('Error : ' + error);
+        });
+
+        //
+        // Membagi tiap blok then sesuai tugas
+        function status (response) {
+            if (response.status !== 200) {
+                console.log('error : ' + response.status);
+                return Promise.reject(new Error(response.statusText));
+            } else {
+                return Promise.resolve(response);
+            }
+        }
+
+        function json (response) {
+            return response.json();
+        }
+
+        function error (error){
+            console.log("error : " + error);
+        }
+
+        fetch("https://readerapi.codepolitan.com/articles")
+        .then(status)
+        .then(json)
+        .then(function (data) {
+            // objek/array dari response.json masuk lewat data
+            console.log(data);
+        })
+        .catch(error);
+    </script>
+</body>
+</html>
