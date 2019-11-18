@@ -1,4 +1,4 @@
-const CACHE_NAME = "firstpwa2";
+const CACHE_NAME = "firstpwa";
 var urlsToCache = [
     "/",
     "./nav.html",
@@ -8,7 +8,9 @@ var urlsToCache = [
     "./pages/contact.html",
     "./css/materialize.min.css",
     "./js/materialize.min.js",
-    "./js/nav.js"
+    "./js/nav.js",
+    "icon.png",
+    "./manifest.json"
 ];
 
 self.addEventListener("install", function(event){
@@ -19,7 +21,7 @@ self.addEventListener("install", function(event){
     );
 });
 
-self.addEventListener("fecth", function(event){
+self.addEventListener("fetch", function(event){
     event.respondWith(
         caches
             .match(event.request, { cacheName: CACHE_NAME })

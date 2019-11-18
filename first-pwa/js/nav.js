@@ -6,14 +6,14 @@ document.addEventListener("DOMContentLoaded", function(){
     loadNav();
 
     function loadNav(){
-        var xhtpp = new XMLHttpRequest();
-        xhtpp.onreadystatechange = function(){
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(){
             if (this.readyState == 4) {
                 if (this.status != 200) return;
 
                 //Muat daftar tautan menu
                 document.querySelectorAll(".topnav, .sidenav").forEach(function(elm){
-                    elm.innerHTML = xhtpp.responseText;
+                    elm.innerHTML = xhttp.responseText;
                 });
 
                 //Daftarkan event listener untuk setiap tautan menu
@@ -30,8 +30,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 });
             }
         };
-        xhtpp.open("GET", "nav.html", true);
-        xhtpp.send();
+        xhttp.open("GET", "nav.html", true);
+        xhttp.send();
     }
 
     //Load page content
@@ -40,12 +40,12 @@ document.addEventListener("DOMContentLoaded", function(){
     loadPage(page);
 
     function loadPage(page){
-        var xhtpp = new XMLHttpRequest();
-        xhtpp.onreadystatechange = function(){
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(){
             if(this.readyState == 4){
                 var content = document.querySelector("#body-content");
                 if(this.status == 200){
-                    content.innerHTML = xhtpp.responseText;
+                    content.innerHTML = xhttp.responseText;
                 }else if(this.status == 404){
                     content.innerHTML = "<p> Halaman tidak bisa di temukan</p>";
                 }else {
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 }
             }
         };
-        xhtpp.open("GET", "pages/"+ page + ".html", true);
-        xhtpp.send();
+        xhttp.open("GET", "pages/"+ page + ".html", true);
+        xhttp.send();
     }
 });
