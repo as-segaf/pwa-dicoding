@@ -21,6 +21,21 @@ self.addEventListener("install", function(event){
     );
 });
 
+self.addEventListener("activate", function(event){
+    event.waitUntil(
+        caches.keys().then(function(cacheNames) {
+            return Promise.all(
+                cacheNames.map(function(cacheName){
+                    if (cacheName != CACHE_NAME) {
+                        console.log("Service worker: cache " + cacheName + " dihapus");
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
+
 self.addEventListener("fetch", function(event){
     event.respondWith(
         caches
@@ -37,20 +52,5 @@ self.addEventListener("fetch", function(event){
                 );
                 return fetch(event.request);
             })
-    );
-});
-
-self.addEventListener("activate", function(event){
-    event.waitUntil(
-        caches.keys().then(function(cacheNames) {
-            return Promise.all(
-                cacheNames.map(function(cacheName){
-                    if (cacheName != CACHE_NAME) {
-                        console.log("Service worker: cache " + cacheName + " dihapus");
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
     );
 });
