@@ -62,3 +62,20 @@ self.addEventListener('fetch', function(event) {
         })
     );
 });
+
+
+self.addEventListener('activate', function(event) {
+    console.log('Aktivasi service worker baru');
+
+    event.waitUntil(
+        caches.keys().then(function(cacheNames) {
+            return Promise.all(
+                cacheNames.map(function(cacheName) {
+                    if (cacheName !== CACHE_NAME && cacheName.startsWith("codepolitan_reader_lite")) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
