@@ -17,19 +17,48 @@ self.addEventListener("install", function(event) {
     );
 });
 
-self.addEventListener("fetch", function(event) {
-    event.respondWith(
-        caches.match(event.request)
-        .then(function(response) {
-            console.log("serviceWorker: Menarik data : ", event.request.url);
+// self.addEventListener("fetch", function(event) {
+//     event.respondWith(
+//         caches.match(event.request)
+//         .then(function(response) {
+//             console.log("serviceWorker: Menarik data : ", event.request.url);
 
+//             if (response) {
+//                 console.log("Service worker : Gunakan asset dari cache : ", response.url);
+//                 return response;
+//             }
+
+//             console.log("service worker: memuat asset dari server: " , event.request.url);
+//             return fetch(event.request);
+//         })
+//     );
+// });
+
+self.addEventListener('fetch', function(event) {
+    event.respondWith(
+        caches.match(event.request, {cacheName:CACHE_NAME})
+        .then(function(response) {
             if (response) {
-                console.log("Service worker : Gunakan asset dari cache : ", response.url);
                 return response;
             }
 
-            console.log("service worker: memuat asset dari server: " , event.request.url);
-            return fetch(event.request);
+            var fetchRequest = event.request.clone();
+
+            return fetch(fetchRequest).then(
+                function(response) {
+                    if (!response || response.status !== 200) {
+                        return response;
+                    }
+
+                    var responseToCache = response.clone();
+                    caches.open(CACHE_NAME)
+                    .then(function(cache) {
+                        cache.put(event.request, responseToCache);
+                    });
+
+                    return response;
+                }
+            );
         })
     );
 });
