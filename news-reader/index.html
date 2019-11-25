@@ -10,6 +10,7 @@
     <link rel="manifest" href="./manifest.json">
     <script src="./js/materialize.min.js"></script>
     <script src="./js/nav.js"></script>
+    <script src="./js/api.js"></script>
     <title>News Reader</title>
 </head>
 <body>
@@ -44,5 +45,10 @@
         } else{
             console.log("Service worker tidak di dukung oleh browser");
         }
+
+        // Request pertama kali 
+        document.addEventListener("DOMContentLoaded", function() {
+            getArticles();
+        });
     </script>
 </body>
