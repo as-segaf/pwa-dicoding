@@ -23,37 +23,6 @@ function error(error) {
     console.log('Error : ' + error);
 }
 
-// // request data json
-// function getArticles() {
-//     fetch(base_url + "articles")
-//         .then(status)
-//         .then(json)
-//         .then(function(data) {
-//             // objek/array javascript dari response.json masuk lewat data
-
-//             //menyusun komponen card artikel secara dinamis
-//             var articlesHTML = "";
-//             data.result.forEach(function(article) {
-//                 articlesHTML += `
-//                     <div class="card">
-//                         <a href="./article.html?id=${article.id}">
-//                             <div class="card-image waves-effect waves-block waves-light">
-//                                 <img src="${article.thumbnail}"/>
-//                             </div>
-//                         </a>
-//                         <div class="card-content">
-//                             <span class="card-title truncate">${article.title}</span>
-//                             <p>${article.description}</p>
-//                         </div>
-//                     </div>
-//                     `;
-//             });
-//             // sisipkan componen card ke dalam elemen dengan id #content
-//             document.getElementById('articles').innerHTML = articlesHTML;
-//         })
-//         .catch(error);
-// }
-
 function getArticles() {
 
     if ('caches' in window) {
@@ -111,15 +80,16 @@ function getArticles() {
 }
 
 function getArticleById() {
-    // Ambil nilai query parameter (?id=)
+  return new Promise(function(resolve, reject) {
+    // ambil nilai query parameter (?id=)
     var urlParams = new URLSearchParams(window.location.search);
     var idParam = urlParams.get("id");
 
     if ("caches" in window) {
-        caches.match(base_url + "article/" + idParam).then(function(response) {
-          if (response) {
-            response.json().then(function(data) {
-              var articleHTML = `
+      caches.match(base_url + "article/" + idParam).then(function(response) {
+        if (response) {
+          response.json().then(function(data){
+            var articleHTML = `
                 <div class="card">
                   <div class="card-image waves-effect waves-block waves-light">
                     <img src="${data.result.cover}" />
@@ -130,21 +100,20 @@ function getArticleById() {
                   </div>
                 </div>
               `;
-              // Sisipkan komponen card ke dalam elemen dengan id #content
+              // sisipkan komponen card ke dalam elemen dengan id #content
               document.getElementById("body-content").innerHTML = articleHTML;
-            });
-          }
-        });
+              // kirim objek data hasil parsing json agar bisa disimpan ke indexed db
+              resolve(data);
+          });
+        }
+      });
     }
 
     fetch(base_url + "article/" + idParam)
-    .then(status)
-    .then(json)
-    .then(function(data) {
-        // objek js dari response.json masuk lewat variable data
-        console.log(data);
-        // menyusun komponen card artikel secara dinamis
-        var articleHTML = `
+     .then(status)
+     .then(json)
+     .then(function(data) {
+       var articleHTML = `
           <div class="card">
             <div class="card-image waves-effect waves-block waves-light">
               <img src="${data.result.cover}" />
@@ -155,7 +124,10 @@ function getArticleById() {
             </div>
           </div>
         `;
-      // Sisipkan komponen card ke dalam elemen dengan id #content
-      document.getElementById("body-content").innerHTML = articleHTML;
-    });
+        // sisipkan komponen card ke dalam elemen dengan id #content
+        document.getElementById("body-content").innerHTML = articleHTML;
+        // kirim objek data hasil parsing json agar bisa disimpan ke indexed db
+        resolve(data);
+     });
+  });
 }
